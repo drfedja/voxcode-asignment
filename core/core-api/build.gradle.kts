@@ -1,0 +1,47 @@
+import com.android.build.gradle.internal.packaging.createDefaultDebugStore
+
+plugins {
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
+}
+
+android {
+    namespace = "com.voxcode.api"
+    compileSdk {
+        version = release(37)
+    }
+    buildFeatures {
+        buildConfig = true
+    }
+    buildTypes {
+        debug {
+            val baseUrl = rootProject.extra["BASE_URL_DEBUG"] as String
+            buildConfigField("String", "BASE_URL", "\"$baseUrl\"")
+        }
+    }
+
+    defaultConfig {
+        minSdk = 24
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+
+}
+
+dependencies {
+    // retrofit
+    implementation(libs.retrofit)
+
+    // junit
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+
+    // hilt di
+    ksp(libs.hilt.compiler)
+    implementation(libs.hilt.android)
+}
