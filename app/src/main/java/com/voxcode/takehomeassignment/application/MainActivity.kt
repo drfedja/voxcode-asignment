@@ -5,7 +5,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.MaterialTheme
-import com.voxcode.takehomeassignment.application.composable.AppWrapper
+import com.voxcode.core_ui.composable.AppWrapper
+import com.voxcode.takehomeassignment.application.composable.NavHostProvider
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -17,9 +18,9 @@ class MainActivity : ComponentActivity() {
             MaterialTheme(
                 content = {
                     AppWrapper {
-
+                        NavHostProvider()
                     }
-                }
+                },
             )
         }
     }

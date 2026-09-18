@@ -37,6 +37,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:core-ui"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -45,6 +46,9 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.material3)
+
+    // compose navigation
+    implementation(libs.androidx.navigation.compose)
 
     // hilt di
     implementation(libs.hilt.android)

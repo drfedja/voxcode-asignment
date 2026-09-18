@@ -1,4 +1,4 @@
-package com.voxcode.takehomeassignment.application.composable
+package com.voxcode.core_ui.composable
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
