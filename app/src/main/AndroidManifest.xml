@@ -16,7 +16,8 @@
         android:theme="@style/Theme.TakeHomeAssignment">
         <activity
             android:name=".application.MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.TakeHomeAssignment">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
