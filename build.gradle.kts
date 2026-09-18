@@ -6,3 +6,5 @@ plugins {
     alias(libs.plugins.hilt) apply false
     alias(libs.plugins.android.library) apply false
 }
+
+gradle.rootProject.extra["BASE_URL_DEBUG"] = "https://newsapi.org/v2"

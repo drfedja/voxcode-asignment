@@ -25,3 +25,4 @@ dependencyResolutionManagement {
 rootProject.name = "Take-Home Assignment"
 include(":app")
 include(":core:core-ui")
+include(":core:core-api")
