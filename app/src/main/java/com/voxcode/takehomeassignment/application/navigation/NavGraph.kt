@@ -31,6 +31,6 @@ interface NavGraph {
                     "${Uri.encode(title)}/" +
                     "${Uri.encode(date)}/" +
                     "${Uri.encode(desc)}/" +
-                    Uri.encode(article)
+                    "${Uri.encode(article)}"
     }
 }

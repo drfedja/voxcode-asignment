@@ -39,10 +39,6 @@ dependencies {
     // retrofit
     implementation(libs.retrofit)
 
-    // junit
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-
     // hilt di
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.android)

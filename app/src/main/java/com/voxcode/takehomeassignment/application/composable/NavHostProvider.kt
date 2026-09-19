@@ -37,7 +37,7 @@ fun NavHostProvider() {
                 route = NavGraph.ArticlesList.route
             ) {
                 ArticlesScreen(
-                    onNavigate = { title, article, author, date, description ->
+                    onNavigate = { author, title, date, description, article ->
                         navController.navigate(
                             NavGraph.ArticleDetails.createRoute(
                                 title = title,
@@ -75,7 +75,7 @@ fun NavHostProvider() {
                         context.startActivity(
                             Intent(
                                 Intent.ACTION_VIEW,
-                                description.toUri()
+                                it.toUri()
                             )
                         )
                     }

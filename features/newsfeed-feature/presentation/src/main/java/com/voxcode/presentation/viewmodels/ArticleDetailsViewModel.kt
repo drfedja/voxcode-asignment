@@ -23,7 +23,7 @@ internal class ArticleDetailsViewModel @Inject constructor() :
         )
     }
 
-    fun setArticle(
+    private fun setArticle(
         author: String,
         title: String,
         date: String,
