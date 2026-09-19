@@ -1,6 +1,7 @@
 package com.voxcode.data.repository
 
 import com.voxcode.api.ApiHandler
+import com.voxcode.api.BuildConfig
 import com.voxcode.data.api.NewsApi
 import com.voxcode.data.mappers.toDomain
 import com.voxcode.domain.models.NewsPage
@@ -19,6 +20,7 @@ internal class NewsRepositoryImpl @Inject constructor(
         return handleApi(
             execute = {
                 newsApi.getTopHeadlines(
+                    apiKey = BuildConfig.API_KEY,
                     country = country,
                     pageSize = pageSize,
                     page = page

@@ -17,7 +17,9 @@ android {
     buildTypes {
         debug {
             val baseUrl = rootProject.extra["BASE_URL_DEBUG"] as String
+            val apikey = rootProject.extra["API_KEY"] as String
             buildConfigField("String", "BASE_URL", "\"$baseUrl\"")
+            buildConfigField("String", "API_KEY", "\"$apikey\"")
         }
     }
 

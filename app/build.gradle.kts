@@ -38,6 +38,8 @@ android {
 
 dependencies {
     implementation(project(":core:core-ui"))
+    implementation(project(":features:newsfeed-feature:presentation"))
+    implementation(project(":features:newsfeed-feature:data"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
