@@ -14,43 +14,103 @@ internal class ArticlesViewModel @Inject constructor(
     private val useCase: NewsUseCase
 ) : BaseViewModel<ArticlesViewModel.ViewState>() {
 
-    override fun getInitialState(): ViewState = ViewState()
+    override fun getInitialState() = ViewState(
+        loadNextPage = ::loadNextPage,
+        onRefresh = ::refresh
+    )
+
+    private var currentPage = 1
 
     init {
-        loadArticles()
+        loadPage(page = 1, isRefresh = false)
     }
 
-    private fun loadArticles() {
+    private fun loadPage(
+        page: Int,
+        isRefresh: Boolean
+    ) {
         viewModelScope.launch {
+            reduceState {
+                it.copy(
+                    screenState = ScreenState.Loading,
+                    isRefreshing = isRefresh,
+                    isLoadingNextPage = !isRefresh,
+                    paginationError = null,
+                    hasMore = true
+                )
+            }
+
             useCase.invoke(
                 country = "us",
-                page = 1,
+                page = page,
                 pageSize = PAGE_SIZE
             ).onSuccess { result ->
-                reduce(
-                    articles = result.articles,
-                    screenState = ScreenState.Success
-                )
-            }.onFailure {
-                reduce(
-                    screenState = ScreenState.Failure(
-                        it.message ?: "Unknown error"
+
+                currentPage = page
+
+                reduceState {
+                    val articles = if (isRefresh) {
+                        result.articles
+                    } else {
+                        it.articles + result.articles
+                    }
+
+                    it.copy(
+                        articles = articles,
+                        screenState = ScreenState.Success,
+                        isRefreshing = false,
+                        isLoadingNextPage = false,
+                        hasMore = result.articles.isNotEmpty() &&
+                                articles.size < result.totalResults,
+                        paginationError = null
                     )
-                )
+                }
+            }.onFailure { throwable ->
+                reduceState {
+                    it.copy(
+                        isRefreshing = false,
+                        isLoadingNextPage = false,
+                        screenState = if (isRefresh) {
+                            ScreenState.Failure(
+                                throwable.message ?: "Unable to load articles"
+                            )
+                        } else {
+                            ScreenState.Success
+                        },
+                        paginationError = if (isRefresh) {
+                            null
+                        } else {
+                            throwable.message ?: "Unable to load more articles"
+                        }
+                    )
+                }
             }
         }
     }
 
-    private fun reduce(
-        articles: List<Article>? = null,
-        screenState: ScreenState? = null
-    ) {
-        reduceState {
-            it.copy(
-                articles = articles ?: it.articles,
-                screenState = screenState ?: it.screenState
-            )
+    private fun refresh() {
+        currentPage = 1
+        loadPage(
+            page = 1,
+            isRefresh = true
+        )
+    }
+
+    private fun loadNextPage() {
+        val currentState = state.value
+
+        if (
+            currentState.isLoadingNextPage ||
+            currentState.isRefreshing ||
+            !currentState.hasMore
+        ) {
+            return
         }
+
+        loadPage(
+            page = currentPage + 1,
+            isRefresh = false
+        )
     }
 
     data class ViewState(
@@ -59,10 +119,12 @@ internal class ArticlesViewModel @Inject constructor(
         val isRefreshing: Boolean = false,
         val isLoadingNextPage: Boolean = false,
         val hasMore: Boolean = true,
-        val paginationError: String? = null
+        val paginationError: String? = null,
+        val loadNextPage: () -> Unit,
+        val onRefresh: () -> Unit
     )
 
     companion object {
-        private const val PAGE_SIZE = 10
+        const val PAGE_SIZE = 5
     }
 }
