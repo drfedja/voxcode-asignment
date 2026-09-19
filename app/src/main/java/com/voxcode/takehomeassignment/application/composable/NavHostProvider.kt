@@ -1,5 +1,6 @@
 package com.voxcode.takehomeassignment.application.composable
 
+import android.content.Intent
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
@@ -7,18 +8,22 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.voxcode.core_ui.composable.LocalNavController
+import com.voxcode.presentation.composables.ArticleDetailsScreen
 import com.voxcode.presentation.composables.ArticlesScreen
 import com.voxcode.takehomeassignment.application.navigation.NavGraph
+import androidx.core.net.toUri
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NavHostProvider() {
     val navController = rememberNavController()
+    val context = LocalContext.current
 
     CompositionLocalProvider(LocalNavController provides navController) {
         NavHost(
@@ -60,13 +65,21 @@ fun NavHostProvider() {
                 val description = backstackEntry
                     .arguments?.getString(NavGraph.ArticleDetails.DESC).orEmpty()
 
-//                ArticleDetailsScreen(
-//                    title = title,
-//                    article = article,
-//                    author = author,
-//                    date = date,
-//                    description = description
-//                )
+                ArticleDetailsScreen(
+                    author = author,
+                    title = title,
+                    date = date,
+                    description = description,
+                    articleUrl = article,
+                    onReadArticle = {
+                        context.startActivity(
+                            Intent(
+                                Intent.ACTION_VIEW,
+                                description.toUri()
+                            )
+                        )
+                    }
+                )
             }
         }
     }

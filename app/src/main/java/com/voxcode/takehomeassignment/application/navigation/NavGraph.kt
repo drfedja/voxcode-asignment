@@ -1,5 +1,7 @@
 package com.voxcode.takehomeassignment.application.navigation
 
+import android.net.Uri
+
 interface NavGraph {
     val route: String
 
@@ -14,7 +16,8 @@ interface NavGraph {
         const val DESC = "desc"
         const val ARTICLE = "article"
 
-        override val route = "/articleDetails/{$AUTHOR}/{$TITLE}/{$DATE}/{$DESC}/{$ARTICLE}"
+        override val route =
+            "/articleDetails/{$AUTHOR}/{$TITLE}/{$DATE}/{$DESC}/{$ARTICLE}"
 
         fun createRoute(
             author: String,
@@ -23,6 +26,11 @@ interface NavGraph {
             desc: String,
             article: String
         ) =
-            "/articleDetails/$author/$title/$date/$desc/$article"
+            "/articleDetails/" +
+                    "${Uri.encode(author)}/" +
+                    "${Uri.encode(title)}/" +
+                    "${Uri.encode(date)}/" +
+                    "${Uri.encode(desc)}/" +
+                    Uri.encode(article)
     }
 }
