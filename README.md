@@ -92,6 +92,10 @@ Tests cover the main flows:
 * JUnit
 * MockK
 
+## Running the Project
+
+The project is configured with the API key and base URL through Gradle, so no additional API configuration is required to build and run the application.
+
 ## Git Workflow
 
 Development was organized using feature branches and incremental commits, with completed features merged into the development branch before the final merge into `main`.
