@@ -1,5 +1,7 @@
 package com.voxcode.takehomeassignment.application.composable
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -10,8 +12,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.voxcode.core_ui.composable.LocalNavController
+import com.voxcode.presentation.composables.ArticlesScreen
 import com.voxcode.takehomeassignment.application.navigation.NavGraph
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NavHostProvider() {
     val navController = rememberNavController()
@@ -27,7 +31,19 @@ fun NavHostProvider() {
             composable(
                 route = NavGraph.ArticlesList.route
             ) {
-//                ArticlesListScreen()
+                ArticlesScreen(
+                    onNavigate = { title, article, author, date, description ->
+                        navController.navigate(
+                            NavGraph.ArticleDetails.createRoute(
+                                title = title,
+                                article = article,
+                                author = author,
+                                date = date,
+                                desc = description
+                            )
+                        )
+                    }
+                )
             }
 
             composable(

@@ -7,7 +7,7 @@ plugins {
     alias(libs.plugins.android.library) apply false
 }
 
-gradle.rootProject.extra["BASE_URL_DEBUG"] = "https://newsapi.org/v2"
+gradle.rootProject.extra["BASE_URL_DEBUG"] = "https://newsapi.org/v2/"
 
 // For this take-home assignment, the API key is kept in Gradle for easier setup and review.
 // In a production project, it would be provided via local.properties or CI/CD secrets and never committed.
