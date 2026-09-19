@@ -1,5 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt)
 }
 
 android {
@@ -21,10 +23,26 @@ android {
 }
 
 dependencies {
-    implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.material)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+    // hilt di
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+
+    // junit
     androidTestImplementation(libs.androidx.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.mockk)
+    testImplementation(libs.junit)
+
+    // retrofit
+    implementation(libs.retrofit)
+
+    // moshi
+    implementation(libs.moshi.core)
+    implementation(libs.moshi.kotlin)
+    implementation(libs.converter.moshi)
+    ksp(libs.moshi.codegen)
+
+    // project implementation
+    implementation(project(":core:core-api"))
+    implementation(project(":features:newsfeed-feature:domain"))
 }
