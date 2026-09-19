@@ -24,4 +24,9 @@ dependencyResolutionManagement {
 
 rootProject.name = "Take-Home Assignment"
 include(":app")
- 
+include(":core:core-ui")
+include(":core:core-api")
+include(":features")
+include(":features:newsfeed-feature:data")
+include(":features:newsfeed-feature:domain")
+include(":features:newsfeed-feature:presentation")

@@ -37,6 +37,9 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:core-ui"))
+    implementation(project(":features:newsfeed-feature:presentation"))
+    implementation(project(":features:newsfeed-feature:data"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -46,11 +49,10 @@ dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.material3)
 
+    // compose navigation
+    implementation(libs.androidx.navigation.compose)
+
     // hilt di
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
-
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
 }
