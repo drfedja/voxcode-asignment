@@ -7,11 +7,6 @@ import kotlinx.coroutines.flow.update
 
 abstract class BaseViewModel<State: Any> : ViewModel() {
 
-    // initial destination set for View model
-    private var _navGraphDestination: Int? = null
-    val navGraphDestination: Int?
-        get() = _navGraphDestination
-
     private val mutableState by lazy { MutableStateFlow(getInitialState()) }
     // state is exposed as instance of mutableState
     val state: StateFlow<State> by lazy { mutableState }

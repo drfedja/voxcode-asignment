@@ -3,11 +3,11 @@ package com.voxcode.core_ui.composable
 import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.voxcode.core_ui.base.BaseViewModel
 import kotlinx.coroutines.flow.collect
@@ -23,7 +23,7 @@ fun <State : Any> Screen(
     viewModel: BaseViewModel<State>,
     content: @Composable (State) -> Unit
 ) {
-    val viewState by viewModel.state.collectAsState()
+    val viewState by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val navController = LocalNavController.current
 

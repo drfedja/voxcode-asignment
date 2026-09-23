@@ -5,11 +5,11 @@ import android.net.Uri
 interface NavGraph {
     val route: String
 
-    data object ArticlesList: NavGraph {
+    object ArticlesList: NavGraph {
         override val route = "/"
     }
 
-    data object ArticleDetails : NavGraph {
+    object ArticleDetails : NavGraph {
         const val AUTHOR = "author"
         const val TITLE = "title"
         const val DATE = "date"
