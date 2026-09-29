@@ -36,10 +36,8 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.voxcode.core_ui.composable.Screen
 import com.voxcode.core_ui.screen_state.ScreenState
 import com.voxcode.domain.models.Article
+import com.voxcode.presentation.util.formatArticleDate
 import com.voxcode.presentation.viewmodels.ArticlesViewModel
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import kotlin.time.toJavaInstant
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -56,28 +54,33 @@ fun ArticlesScreen(
         viewModel = hiltViewModel<ArticlesViewModel>()
     ) { viewState ->
 
-        Box(
+        PullToRefreshBox(
+            isRefreshing = viewState.isRefreshing,
+            onRefresh = viewState.onRefresh,
             modifier = Modifier.fillMaxSize()
         ) {
-            ArticlesContent(
-                articles = viewState.articles,
-                hasMore = viewState.hasMore,
-                isLoadingNextPage = viewState.isLoadingNextPage,
-                isRefreshing = viewState.isRefreshing,
-                onLoadNextPage = viewState.loadNextPage,
-                onRefresh = viewState.onRefresh,
-                onNavigate = onNavigate
-            )
+
+            if (
+                viewState.screenState == ScreenState.Success ||
+                viewState.screenState == ScreenState.Loading)
+            {
+                ArticlesContent(
+                    articles = viewState.articles,
+                    hasMore = viewState.hasMore,
+                    isLoadingNextPage = viewState.isLoadingNextPage,
+                    onLoadNextPage = viewState.loadNextPage,
+                    onNavigate = onNavigate
+                )
+            }
 
             when (val state = viewState.screenState) {
+
                 is ScreenState.Loading -> {
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
                             .background(
-                                MaterialTheme.colorScheme.surface.copy(
-                                    alpha = 0.5f
-                                )
+                                MaterialTheme.colorScheme.surface.copy(alpha = 0.5f)
                             ),
                         contentAlignment = Alignment.Center
                     ) {
@@ -85,14 +88,22 @@ fun ArticlesScreen(
                     }
                 }
 
-                is ScreenState.Failure -> {
-                    Text(
-                        modifier = Modifier.align(Alignment.Center),
-                        text = state.message
-                    )
-                }
+                is ScreenState.Success -> Unit
 
-                else -> Unit
+                is ScreenState.Failure -> {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        item {
+                            Box(
+                                modifier = Modifier.fillParentMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(text = state.message)
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -104,9 +115,7 @@ private fun ArticlesContent(
     articles: List<Article>,
     hasMore: Boolean,
     isLoadingNextPage: Boolean,
-    isRefreshing: Boolean,
     onLoadNextPage: () -> Unit,
-    onRefresh: () -> Unit,
     onNavigate: (
         author: String,
         title: String,
@@ -168,31 +177,26 @@ private fun ArticlesContent(
         }
     }
 
-    PullToRefreshBox(
-        isRefreshing = isRefreshing,
-        onRefresh = onRefresh,
+    LazyColumn(
+        state = listState,
         modifier = Modifier.nestedScroll(nestedScrollConnection)
     ) {
-        LazyColumn(
-            state = listState
-        ) {
-            items(
-                items = articles,
-                key = Article::url
-            ) { article ->
-                ArticleListItem(
-                    article = article,
-                    onClick = {
-                        onNavigate(
-                            article.author.orEmpty(),
-                            article.title,
-                            article.publishedAt?.toString().orEmpty(),
-                            article.description.orEmpty(),
-                            article.url
-                        )
-                    }
-                )
-            }
+        items(
+            items = articles,
+            key = Article::url
+        ) { article ->
+            ArticleListItem(
+                article = article,
+                onClick = {
+                    onNavigate(
+                        article.author.orEmpty(),
+                        article.title,
+                        article.publishedAt?.toString().orEmpty(),
+                        article.description.orEmpty(),
+                        article.url
+                    )
+                }
+            )
         }
     }
 }
@@ -238,12 +242,5 @@ private fun ArticleListItem(
     HorizontalDivider()
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
-private fun formatArticleDate(
-    instant: kotlin.time.Instant
-): String =
-    DateTimeFormatter.ofPattern("MMM d, yyyy")
-        .withZone(ZoneId.systemDefault())
-        .format(instant.toJavaInstant())
 
 

@@ -150,7 +150,7 @@ class ArticlesViewModelUnitTests {
         )
 
         assertEquals(
-            null,
+            "Unable to refresh",
             viewModel.state.value.paginationError
         )
 
