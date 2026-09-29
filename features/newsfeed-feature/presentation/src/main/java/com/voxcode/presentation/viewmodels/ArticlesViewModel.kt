@@ -70,18 +70,10 @@ internal class ArticlesViewModel @Inject constructor(
                     it.copy(
                         isRefreshing = false,
                         isLoadingNextPage = false,
-                        screenState = if (isRefresh) {
-                            ScreenState.Failure(
-                                throwable.message ?: "Unable to load articles"
-                            )
-                        } else {
-                            ScreenState.Success
-                        },
-                        paginationError = if (isRefresh) {
-                            null
-                        } else {
-                            throwable.message ?: "Unable to load more articles"
-                        }
+                        screenState = ScreenState.Failure(
+                            throwable.message ?: "Unable to load articles"
+                        ),
+                        paginationError = throwable.message ?: "Unable to load more articles"
                     )
                 }
             }
