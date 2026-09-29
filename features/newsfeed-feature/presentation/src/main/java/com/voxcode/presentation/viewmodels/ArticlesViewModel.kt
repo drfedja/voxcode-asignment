@@ -34,7 +34,7 @@ internal class ArticlesViewModel @Inject constructor(
                 it.copy(
                     screenState = ScreenState.Loading,
                     isRefreshing = isRefresh,
-                    isLoadingNextPage = !isRefresh,
+                    isLoadingNextPage = page > 1,
                     paginationError = null,
                     hasMore = true
                 )

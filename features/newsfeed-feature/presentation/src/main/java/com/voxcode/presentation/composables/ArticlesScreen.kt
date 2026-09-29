@@ -59,19 +59,23 @@ fun ArticlesScreen(
             onRefresh = viewState.onRefresh,
             modifier = Modifier.fillMaxSize()
         ) {
+
+            if (
+                viewState.screenState == ScreenState.Success ||
+                viewState.screenState == ScreenState.Loading)
+            {
+                ArticlesContent(
+                    articles = viewState.articles,
+                    hasMore = viewState.hasMore,
+                    isLoadingNextPage = viewState.isLoadingNextPage,
+                    onLoadNextPage = viewState.loadNextPage,
+                    onNavigate = onNavigate
+                )
+            }
+
             when (val state = viewState.screenState) {
 
                 is ScreenState.Loading -> {
-                    if (viewState.articles.isNotEmpty()) {
-                        ArticlesContent(
-                            articles = viewState.articles,
-                            hasMore = viewState.hasMore,
-                            isLoadingNextPage = viewState.isLoadingNextPage,
-                            onLoadNextPage = viewState.loadNextPage,
-                            onNavigate = onNavigate
-                        )
-                    }
-
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
@@ -84,15 +88,7 @@ fun ArticlesScreen(
                     }
                 }
 
-                is ScreenState.Success -> {
-                    ArticlesContent(
-                        articles = viewState.articles,
-                        hasMore = viewState.hasMore,
-                        isLoadingNextPage = viewState.isLoadingNextPage,
-                        onLoadNextPage = viewState.loadNextPage,
-                        onNavigate = onNavigate
-                    )
-                }
+                is ScreenState.Success -> Unit
 
                 is ScreenState.Failure -> {
                     LazyColumn(
