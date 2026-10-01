@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.voxcode.core_ui.base.BaseViewModel
 import com.voxcode.core_ui.screen_state.ScreenState
 import com.voxcode.domain.models.Article
+import com.voxcode.domain.models.NewsPage
 import com.voxcode.domain.usecases.NewsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -14,78 +15,44 @@ internal class ArticlesViewModel @Inject constructor(
     private val useCase: NewsUseCase
 ) : BaseViewModel<ArticlesViewModel.ViewState>() {
 
-    override fun getInitialState() = ViewState(
-        loadNextPage = ::loadNextPage,
-        onRefresh = ::refresh
-    )
-
     private var currentPage = 1
 
     init {
         loadPage(page = 1, isRefresh = false)
     }
 
-    private fun loadPage(
-        page: Int,
-        isRefresh: Boolean
-    ) {
-        viewModelScope.launch {
-            reduceState {
-                it.copy(
-                    screenState = ScreenState.Loading,
-                    isRefreshing = isRefresh,
-                    isLoadingNextPage = page > 1,
-                    paginationError = null,
-                    hasMore = true
-                )
-            }
-
-            useCase.invoke(
-                country = "us",
-                page = page,
-                pageSize = PAGE_SIZE
-            ).onSuccess { result ->
-
-                currentPage = page
-
-                reduceState {
-                    val articles = if (isRefresh) {
-                        result.articles
-                    } else {
-                        it.articles + result.articles
-                    }
-
-                    it.copy(
-                        articles = articles,
-                        screenState = ScreenState.Success,
-                        isRefreshing = false,
-                        isLoadingNextPage = false,
-                        hasMore = result.articles.isNotEmpty() &&
-                                articles.size < result.totalResults,
-                        paginationError = null
-                    )
-                }
-            }.onFailure { throwable ->
-                reduceState {
-                    it.copy(
-                        isRefreshing = false,
-                        isLoadingNextPage = false,
-                        screenState = ScreenState.Failure(
-                            throwable.message ?: "Unable to load articles"
-                        ),
-                        paginationError = throwable.message ?: "Unable to load more articles"
-                    )
-                }
-            }
+    private fun handleLoadFailure(throwable: Throwable, isRefresh: Boolean, isLoadingNextPage: Boolean) {
+        reduceState {
+            it.copy(
+                isRefreshing = isRefresh,
+                isLoadingNextPage = isLoadingNextPage,
+                screenState = ScreenState.Failure(
+                    throwable.message ?: "Unable to load articles"
+                ),
+                paginationError = throwable.message ?: "Unable to load more articles"
+            )
         }
     }
 
-    private fun refresh() {
-        currentPage = 1
-        loadPage(
-            page = 1,
-            isRefresh = true
-        )
+    private fun handleLoadSuccess(result: NewsPage, page: Int, isRefresh: Boolean) {
+        currentPage = page
+        reduceState {
+            val articles = if (isRefresh) {
+                result.articles
+            } else {
+                it.articles + result.articles
+            }
+
+            it.copy(
+                articles = articles,
+                screenState = ScreenState.Success,
+                isRefreshing = false,
+                isLoadingNextPage = false,
+                hasMore = result.articles.isNotEmpty() &&
+                        articles.size < result.totalResults,
+                paginationError = null
+            )
+        }
     }
 
     private fun loadNextPage() {
@@ -104,6 +71,50 @@ internal class ArticlesViewModel @Inject constructor(
             isRefresh = false
         )
     }
+
+    private fun loadPage(
+        page: Int,
+        isRefresh: Boolean
+    ) {
+        viewModelScope.launch {
+            setLoadingState(page, isRefresh)
+
+            useCase.invoke(
+                country = "us",
+                page = page,
+                pageSize = PAGE_SIZE
+            ).onSuccess { result ->
+                handleLoadSuccess(result, page, isRefresh)
+            }.onFailure { throwable ->
+                handleLoadFailure(throwable, isRefresh, page > 1)
+            }
+        }
+    }
+
+    private fun refresh() {
+        currentPage = 1
+        loadPage(
+            page = 1,
+            isRefresh = true
+        )
+    }
+
+    private fun setLoadingState(page: Int, isRefresh: Boolean) {
+        reduceState {
+            it.copy(
+                screenState = ScreenState.Loading,
+                isRefreshing = isRefresh,
+                isLoadingNextPage = page > 1,
+                paginationError = null,
+                hasMore = true
+            )
+        }
+    }
+
+    override fun getInitialState() = ViewState(
+        loadNextPage = ::loadNextPage,
+        onRefresh = ::refresh
+    )
 
     data class ViewState(
         val screenState: ScreenState = ScreenState.Loading,

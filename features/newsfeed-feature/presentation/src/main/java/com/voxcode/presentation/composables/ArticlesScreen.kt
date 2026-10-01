@@ -31,6 +31,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.voxcode.core_ui.composable.Screen
@@ -38,6 +39,7 @@ import com.voxcode.core_ui.screen_state.ScreenState
 import com.voxcode.domain.models.Article
 import com.voxcode.presentation.util.formatArticleDate
 import com.voxcode.presentation.viewmodels.ArticlesViewModel
+import kotlin.time.Instant
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -243,4 +245,57 @@ private fun ArticleListItem(
 }
 
 
+@RequiresApi(Build.VERSION_CODES.O)
+@Preview(showBackground = true)
+@Composable
+private fun ArticleListItemPreview() {
+    val mockArticle = Article(
+        title = "Mock Article Title",
+        author = "John Doe",
+        source = "Mock Source",
+        description = "This is a mock description of the article.",
+        url = "https://example.com/article",
+        publishedAt = Instant.parse("2026-10-02T12:00:00Z")
+    )
 
+    MaterialTheme {
+        ArticleListItem(
+            article = mockArticle,
+            onClick = {}
+        )
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Preview(showBackground = true)
+@Composable
+private fun ArticlesContentPreview() {
+    val mockArticles = listOf(
+        Article(
+            title = "Article 1",
+            author = "Author 1",
+            source = "Source 1",
+            description = "Description 1",
+            url = "https://example.com/1",
+            publishedAt = Instant.parse("2026-10-02T12:00:00Z")
+        ),
+        Article(
+            title = "Article 2",
+            author = "Author 2",
+            source = "Source 2",
+            description = "Description 2",
+            url = "https://example.com/2",
+            publishedAt = Instant.parse("2026-10-02T12:00:00Z")
+        )
+    )
+
+    MaterialTheme {
+        ArticlesContent(
+            articles = mockArticles,
+            hasMore = true,
+            isLoadingNextPage = false,
+            onLoadNextPage = {},
+            onNavigate = { _, _, _, _, _ -> }
+        )
+    }
+}

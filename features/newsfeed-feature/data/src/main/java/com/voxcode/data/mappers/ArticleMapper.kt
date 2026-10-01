@@ -20,6 +20,6 @@ internal fun ArticleDto.toDomain(): Article {
         title = title,
         description = description,
         url = url,
-        publishedAt = publishedAt?.let { Instant.parse(it) }
+        publishedAt = publishedAt.let { Instant.parse(it ?: "") }
     )
 }

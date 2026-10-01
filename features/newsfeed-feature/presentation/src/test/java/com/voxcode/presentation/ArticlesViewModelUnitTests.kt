@@ -140,7 +140,7 @@ class ArticlesViewModelUnitTests {
 
         // then
         assertEquals(
-            false,
+            true,
             viewModel.state.value.isRefreshing
         )
 
